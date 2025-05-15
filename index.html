@@ -2,104 +2,65 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <title>Bilgiyle Ülke Yönet</title>
-  <style>
-    body { font-family: sans-serif; text-align: center; background: #f4f4f4; }
-    .container { max-width: 600px; margin: auto; padding: 20px; background: white; border-radius: 10px; box-shadow: 0 0 10px gray; }
-    button { padding: 10px 20px; margin: 10px; }
-  </style>
+    <meta charset="UTF-8">
+    <title>Bilgiyle Ülke Yönet</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; text-align: center; padding: 50px; }
+        .button { padding: 15px 30px; font-size: 18px; margin: 10px; cursor: pointer; }
+        .question { margin-top: 20px; font-size: 20px; }
+        .result { font-weight: bold; margin-top: 15px; }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Bilgiyle Ülke Yönet</h1>
-
-    <label for="country">Bir ülke seç:</label>
-    <select id="country">
-      <option value="turkiye">Türkiye</option>
-      <option value="almanya">Almanya</option>
-      <option value="japonya">Japonya</option>
+    <h1>Ülkeni Seç ve Yönetmeye Başla!</h1>
+    <select id="countrySelect">
+        <option value="Türkiye">Türkiye</option>
+        <option value="Japonya">Japonya</option>
+        <option value="Brezilya">Brezilya</option>
     </select>
-
-    <p><strong>Asker Sayısı:</strong> <span id="soldiers">0</span></p>
-    <p><strong>Bekleme Süresi:</strong> <span id="wait">0</span> tur</p>
-
-    <button onclick="askQuestion()" id="askerBtn">Asker Bas</button>
-
-    <div id="questionArea" style="display:none;">
-      <p id="questionText"></p>
-      <div id="answers"></div>
+    <div>
+        <button class="button" onclick="askQuestion('asker')">Asker Bas</button>
+        <button class="button" onclick="askQuestion('teknoloji')">Teknoloji Geliştir</button>
     </div>
-  </div>
+    <div class="question" id="questionBox"></div>
+    <input type="text" id="answerInput" placeholder="Cevabın" style="display:none;" />
+    <button class="button" id="submitBtn" style="display:none;" onclick="checkAnswer()">Cevapla</button>
+    <div class="result" id="resultBox"></div>
 
-  <script>
-    let soldiers = 0;
-    let wait = 0;
+    <script>
+        const questions = [
+            { q: "Türkiye'nin başkenti neresidir?", a: "ankara" },
+            { q: "2 + 2 kaç eder?", a: "4" },
+            { q: "Dünya'nın uydusunun adı nedir?", a: "ay" }
+        ];
 
-    const questions = [
-      {
-        question: "Türkiye'nin başkenti neresidir?",
-        options: ["Ankara", "İstanbul", "İzmir", "Bursa"],
-        answer: "Ankara"
-      },
-      {
-        question: "Einstein hangi bilim dalında ünlüdür?",
-        options: ["Kimya", "Fizik", "Biyoloji", "Matematik"],
-        answer: "Fizik"
-      },
-      {
-        question: "Dünya'nın en büyük okyanusu hangisidir?",
-        options: ["Hint Okyanusu", "Atlantik", "Pasifik", "Arktik"],
-        answer: "Pasifik"
-      }
-    ];
+        let currentAction = "";
+        let currentQuestion = {};
 
-    function askQuestion() {
-      if (wait > 0) {
-        alert(`Cezalı tursun! ${wait} tur beklemen gerek.`);
-        return;
-      }
+        function askQuestion(action) {
+            currentAction = action;
+            currentQuestion = questions[Math.floor(Math.random() * questions.length)];
+            document.getElementById("questionBox").innerText = currentQuestion.q;
+            document.getElementById("answerInput").style.display = "inline";
+            document.getElementById("submitBtn").style.display = "inline";
+            document.getElementById("resultBox").innerText = "";
+        }
 
-      const q = questions[Math.floor(Math.random() * questions.length)];
-      document.getElementById("questionText").innerText = q.question;
-      const answersDiv = document.getElementById("answers");
-      answersDiv.innerHTML = "";
-
-      q.options.forEach(opt => {
-        const btn = document.createElement("button");
-        btn.innerText = opt;
-        btn.onclick = () => checkAnswer(opt, q.answer);
-        answersDiv.appendChild(btn);
-      });
-
-      document.getElementById("questionArea").style.display = "block";
-    }
-
-    function checkAnswer(given, correct) {
-      document.getElementById("questionArea").style.display = "none";
-
-      if (given === correct) {
-        soldiers += 10;
-        alert("Doğru cevap! 10 asker kazandın.");
-      } else {
-        wait = 5;
-        alert("Yanlış cevap! 5 tur beklemek zorundasın.");
-      }
-
-      updateStats();
-    }
-
-    function updateStats() {
-      document.getElementById("soldiers").innerText = soldiers;
-      document.getElementById("wait").innerText = wait;
-    }
-
-    setInterval(() => {
-      if (wait > 0) {
-        wait--;
-        updateStats();
-      }
-    }, 3000);
-  </script>
+        function checkAnswer() {
+            const userAnswer = document.getElementById("answerInput").value.toLowerCase().trim();
+            if (userAnswer === currentQuestion.a) {
+                if (currentAction === "asker") {
+                    document.getElementById("resultBox").innerText = "Tebrikler! Asker bastınız!";
+                } else {
+                    document.getElementById("resultBox").innerText = "Tebrikler! Teknolojinizi geliştirdiniz!";
+                }
+            } else {
+                document.getElementById("resultBox").innerText = "Yanlış cevap! 5 tur beklemeniz gerekiyor.";
+            }
+            document.getElementById("answerInput").value = "";
+            document.getElementById("answerInput").style.display = "none";
+            document.getElementById("submitBtn").style.display = "none";
+        }
+    </script>
 </body>
 </html>
