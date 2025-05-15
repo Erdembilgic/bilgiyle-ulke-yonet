@@ -1,0 +1,105 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Bilgiyle Ülke Yönet</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; background: #f4f4f4; }
+    .container { max-width: 600px; margin: auto; padding: 20px; background: white; border-radius: 10px; box-shadow: 0 0 10px gray; }
+    button { padding: 10px 20px; margin: 10px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Bilgiyle Ülke Yönet</h1>
+
+    <label for="country">Bir ülke seç:</label>
+    <select id="country">
+      <option value="turkiye">Türkiye</option>
+      <option value="almanya">Almanya</option>
+      <option value="japonya">Japonya</option>
+    </select>
+
+    <p><strong>Asker Sayısı:</strong> <span id="soldiers">0</span></p>
+    <p><strong>Bekleme Süresi:</strong> <span id="wait">0</span> tur</p>
+
+    <button onclick="askQuestion()" id="askerBtn">Asker Bas</button>
+
+    <div id="questionArea" style="display:none;">
+      <p id="questionText"></p>
+      <div id="answers"></div>
+    </div>
+  </div>
+
+  <script>
+    let soldiers = 0;
+    let wait = 0;
+
+    const questions = [
+      {
+        question: "Türkiye'nin başkenti neresidir?",
+        options: ["Ankara", "İstanbul", "İzmir", "Bursa"],
+        answer: "Ankara"
+      },
+      {
+        question: "Einstein hangi bilim dalında ünlüdür?",
+        options: ["Kimya", "Fizik", "Biyoloji", "Matematik"],
+        answer: "Fizik"
+      },
+      {
+        question: "Dünya'nın en büyük okyanusu hangisidir?",
+        options: ["Hint Okyanusu", "Atlantik", "Pasifik", "Arktik"],
+        answer: "Pasifik"
+      }
+    ];
+
+    function askQuestion() {
+      if (wait > 0) {
+        alert(`Cezalı tursun! ${wait} tur beklemen gerek.`);
+        return;
+      }
+
+      const q = questions[Math.floor(Math.random() * questions.length)];
+      document.getElementById("questionText").innerText = q.question;
+      const answersDiv = document.getElementById("answers");
+      answersDiv.innerHTML = "";
+
+      q.options.forEach(opt => {
+        const btn = document.createElement("button");
+        btn.innerText = opt;
+        btn.onclick = () => checkAnswer(opt, q.answer);
+        answersDiv.appendChild(btn);
+      });
+
+      document.getElementById("questionArea").style.display = "block";
+    }
+
+    function checkAnswer(given, correct) {
+      document.getElementById("questionArea").style.display = "none";
+
+      if (given === correct) {
+        soldiers += 10;
+        alert("Doğru cevap! 10 asker kazandın.");
+      } else {
+        wait = 5;
+        alert("Yanlış cevap! 5 tur beklemek zorundasın.");
+      }
+
+      updateStats();
+    }
+
+    function updateStats() {
+      document.getElementById("soldiers").innerText = soldiers;
+      document.getElementById("wait").innerText = wait;
+    }
+
+    setInterval(() => {
+      if (wait > 0) {
+        wait--;
+        updateStats();
+      }
+    }, 3000);
+  </script>
+</body>
+</html>
